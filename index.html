@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World App</title>
+    <!-- Basic styling for better visibility, if desired. Not strictly requested but good practice. -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 40px); /* Account for margin */
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        #app {
+            background-color: #ffffff;
+            padding: 30px 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #007bff;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- The JavaScript will render "Hello World" here -->
+        <h1>Loading...</h1>
+    </div>
+
+    <script>
+        /**
+         * @file index.html
+         * @description This script displays "Hello World" on the page within the #app div.
+         *              It ensures the DOM is fully loaded before attempting to manipulate it.
+         */
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const appDiv = document.getElementById('app');
+
+            // Robustness check: Ensure the target element exists before proceeding.
+            if (appDiv) {
+                // Clear any initial loading text
+                appDiv.innerHTML = '';
+
+                // Create a paragraph element to hold the "Hello World" text.
+                // This is generally better practice than directly setting innerHTML
+                // as it prevents potential XSS issues if content were dynamic.
+                const helloParagraph = document.createElement('p');
+                helloParagraph.textContent = 'Hello World';
+
+                // Apply some basic styling directly, or via a CSS class.
+                helloParagraph.style.fontSize = '2em';
+                helloParagraph.style.fontWeight = 'bold';
+                helloParagraph.style.color = '#28a745'; // Bootstrap success color
+
+                // Append the newly created element to the target div.
+                appDiv.appendChild(helloParagraph);
+
+                console.log('Successfully displayed "Hello World" on the page.');
+            } else {
+                // Log an error if the target element is not found, useful for debugging.
+                console.error('Error: Target element with ID "app" not found. Cannot display "Hello World".');
+                // As a fallback, you could try to alert or document.write, but generally
+                // it's better to log and let the page render gracefully without the specific content.
+            }
+        });
+    </script>
+</body>
+</html>
