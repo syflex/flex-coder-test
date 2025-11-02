@@ -1,140 +1,100 @@
 #!/bin/bash
-
 # dev-setup.sh
+
 # This script automates the setup of the development environment for the flex-coder-test project.
-# It should be run from the root directory of the cloned repository.
+# It ensures necessary tools are available and project dependencies are installed.
 
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
 # --- Configuration ---
-PROJECT_NAME="flex-coder-test"
-NODE_VERSION_MIN="16" # Minimum recommended Node.js major version
-NPM_REQUIRED="true"   # Set to "true" if the project uses npm for dependencies
+# Minimum recommended Node.js major version (e.g., "16" for v16 or higher)
+REQUIRED_NODE_MAJOR_VERSION="16"
+# Minimum recommended npm major version. npm usually comes with Node.js.
+# A common minimum for modern Node.js is around 8 (with Node 16+).
+REQUIRED_NPM_MAJOR_VERSION="8"
 
-# --- Helper Functions for Logging ---
+# --- Utility Functions ---
 
-# Logs an informational message in blue.
-log_info() {
-    echo -e "\e[34m[INFO]\e[0m $1"
+# Function to check if a command exists
+command_exists() {
+  command -v "$1" >/dev/null 2>&1
 }
 
-# Logs a success message in green.
-log_success() {
-    echo -e "\e[32m[SUCCESS]\e[0m $1"
-}
+# Function to check the major version of a tool
+check_tool_major_version() {
+  local tool_name="$1"
+  local version_command="$2"
+  local required_major="$3"
 
-# Logs a warning message in yellow.
-log_warn() {
-    echo -e "\e[33m[WARN]\e[0m $1"
-}
-
-# Logs an error message in red and exits the script.
-log_error() {
-    echo -e "\e[31m[ERROR]\e[0m $1" >&2
+  if ! command_exists "$tool_name"; then
+    echo "Error: '$tool_name' is not installed. Please install it to proceed." >&2
     exit 1
+  fi
+
+  local current_version_output
+  current_version_output=$($version_command 2>/dev/null)
+
+  # Extract major version number. Handle 'v16.x.x' or '8.x.x' formats.
+  local current_major_version
+  current_major_version=$(echo "$current_version_output" | sed -E 's/^v?([0-9]+)\..*/\1/')
+
+  if [ -z "$current_major_version" ]; then
+    echo "Error: Could not determine major version for $tool_name from output: '$current_version_output'." >&2
+    echo "Please ensure $tool_name is installed correctly and its version is parseable." >&2
+    exit 1
+  fi
+
+  if (( current_major_version < required_major )); then
+    echo "Error: Installed $tool_name version is $current_major_version.x, but version $required_major or higher is required." >&2
+    echo "Please update $tool_name to proceed." >&2
+    exit 1
+  else
+    echo "✔ $tool_name (v$current_major_version.x) check passed."
+  fi
 }
 
-# --- Validation Functions ---
 
-# Checks if a given command is installed and available in the PATH.
-# Arguments:
-#   $1 - The command name (e.g., "git", "node")
-check_command() {
-    log_info "Checking for $1..."
-    if ! command -v "$1" &> /dev/null; then
-        log_error "$1 is not installed. Please install $1 and try again."
-    fi
-    log_success "Found $1: $(command -v "$1")"
-}
+# --- Main Setup Steps ---
 
-# Checks if the installed Node.js version meets the minimum requirement.
-check_node_version() {
-    if [ "$NPM_REQUIRED" = "true" ]; then
-        log_info "Checking Node.js version..."
-        if ! command -v node &> /dev/null; then
-            log_error "Node.js is not installed. Please install Node.js (v$NODE_VERSION_MIN or higher) and try again."
-        fi
+echo "--- Starting Development Environment Setup for flex-coder-test ---"
+echo "This script will: "
+echo "1. Verify Node.js and npm are installed with required versions."
+echo "2. Install project dependencies from package.json."
+echo ""
 
-        CURRENT_NODE_VERSION=$(node -v | sed 's/v//')
-        log_info "Detected Node.js version: $CURRENT_NODE_VERSION"
+# 1. Check for Node.js and npm
+echo "Checking Node.js and npm versions..."
+check_tool_major_version "node" "node --version" ${REQUIRED_NODE_MAJOR_VERSION}
+check_tool_major_version "npm" "npm --version" ${REQUIRED_NPM_MAJOR_VERSION}
 
-        # Extract major version for comparison
-        MAJOR_CURRENT=$(echo $CURRENT_NODE_VERSION | cut -d. -f1)
-        MAJOR_MIN=$(echo $NODE_VERSION_MIN | cut -d. -f1)
+# 2. Install Node.js dependencies
+echo ""
+echo "Installing Node.js dependencies using npm..."
+if [ -f "package.json" ]; then
+  npm install
+  echo "✔ Node.js dependencies installed successfully."
+else
+  echo "Warning: No 'package.json' file found in the current directory."
+  echo "Skipping 'npm install'. If this is a Node.js project, please ensure 'package.json' is present."
+fi
 
-        if [ "$MAJOR_CURRENT" -lt "$MAJOR_MIN" ]; then
-            log_error "Node.js version v$CURRENT_NODE_VERSION is too old. Please upgrade to v$NODE_VERSION_MIN or higher."
-        fi
-        log_success "Node.js version is compatible (v$CURRENT_NODE_VERSION >= v$NODE_VERSION_MIN)."
-    fi
-}
+# 3. Placeholder for additional setup (e.g., build steps, testing)
+# If your project requires additional steps like compiling TypeScript, running a build script,
+# or running initial tests, you can add them here.
+# Example:
+# echo ""
+# echo "Running project build script (if any)..."
+# if npm run build -- --dry-run >/dev/null 2>&1; then # Check if build script exists without running it
+#   npm run build
+#   echo "✔ Project build completed successfully."
+# else
+#   echo "No 'build' script found in package.json, or it failed validation."
+#   echo "Skipping build step."
+# fi
 
-# --- Main Setup Logic ---
-
-main() {
-    log_info "Starting development environment setup for '$PROJECT_NAME'..."
-    echo ""
-
-    # 1. Verify that the script is run from within a Git repository.
-    log_info "Verifying Git repository status..."
-    if ! git rev-parse --is-inside-work-tree &> /dev/null; then
-        log_error "This script must be run from within the '$PROJECT_NAME' Git repository. Please clone the repository first, then 'cd $PROJECT_NAME'."
-    fi
-    log_success "Current directory is a Git repository."
-    echo ""
-
-    # 2. Check for essential development tools.
-    log_info "Checking for required development tools..."
-    check_command "git"
-    if [ "$NPM_REQUIRED" = "true" ]; then
-        check_command "node"
-        check_node_version
-        check_command "npm"
-    fi
-    log_success "All required tools are installed."
-    echo ""
-
-    # 3. Install Node.js dependencies if a package.json file exists.
-    if [ -f "package.json" ]; then
-        log_info "package.json found. Installing Node.js dependencies using npm..."
-        npm install
-        log_success "Node.js dependencies installed successfully."
-    else
-        log_warn "No package.json found. Skipping npm dependency installation."
-    fi
-    echo ""
-
-    # 4. (Optional) Run initial build or tests if scripts exist in package.json.
-    if [ "$NPM_REQUIRED" = "true" ] && [ -f "package.json" ]; then
-        log_info "Performing initial project checks (build/test)..."
-        # Check if 'build' script exists and run it
-        if grep -q '"build":' package.json; then
-            log_info "Running initial build command (npm run build)..."
-            if ! npm run build; then
-                log_warn "Initial build failed. Please investigate any errors. Continuing setup."
-            else
-                log_success "Initial build completed."
-            fi
-        fi
-        # Check if 'test' script exists and run it
-        if grep -q '"test":' package.json; then
-            log_info "Running initial test command (npm test)..."
-            if ! npm test; then
-                log_warn "Initial tests failed. Please investigate any errors. Continuing setup."
-            else
-                log_success "Initial tests completed."
-            fi
-        fi
-    fi
-    echo ""
-
-    # 5. Final instructions for the developer.
-    log_success "Development environment setup complete for '$PROJECT_NAME'!"
-    log_info "You are now ready to start modifying the code."
-    log_info "Refer to the README.md for more details on project-specific development commands (e.g., 'npm start', 'npm test')."
-    echo ""
-}
-
-# Execute the main function.
-main
+echo ""
+echo "--- Development Environment Setup Complete! ---"
+echo "You are now ready to start modifying the 'flex-coder-test' project."
+echo "To run your application or tests, refer to the project's 'package.json' scripts."
+echo "------------------------------------------------"

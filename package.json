@@ -4,14 +4,14 @@
   "description": "A basic project for flex-coder assignments and development environment testing.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified yet. Create 'test.js' or update this script.\" && exit 1",
-    "build": "echo \"No build step configured yet. Add build commands here.\" && exit 0",
-    "start": "echo \"No start command configured yet. Add 'node index.js' or similar.\" && exit 0"
+    "start": "echo \"'flex-coder-test' is running!\" && echo \"Implement your application logic in index.js or similar files.\"",
+    "test": "echo \"No tests configured yet. Add your test scripts here.\" && exit 0"
   },
   "keywords": [],
-  "author": "Flex Coder Team",
+  "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "prettier": "^3.0.0"
-  }
+  "dependencies": {
+    "chalk": "^4.1.2"
+  },
+  "devDependencies": {}
 }
