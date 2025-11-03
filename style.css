@@ -1,0 +1,117 @@
+/* Basic Reset & Body Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align content to the top */
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+/* Input and Button Section */
+.todo-input-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+#newTodoInput {
+    flex-grow: 1;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s ease-in-out;
+}
+
+#newTodoInput:focus {
+    border-color: #007bff;
+}
+
+#addTodoBtn {
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease-in-out;
+    white-space: nowrap; /* Prevent button text from wrapping */
+}
+
+#addTodoBtn:hover {
+    background-color: #0056b3;
+}
+
+#addTodoBtn:active {
+    background-color: #004085;
+}
+
+/* Todo List */
+#todoList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#todoList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #eee;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#todoList li:hover {
+    background-color: #f0f0f0;
+}
+
+#todoList li span.todo-text {
+    flex-grow: 1;
+    word-break: break-word; /* Ensure long words break */
+    margin-right: 15px; /* Space between text and button */
+}
+
+#todoList li .delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#todoList li .delete-btn:hover {
+    background-color: #c82333;
+}
+
+#todoList li .delete-btn:active {
+    background-color: #bd2130;
+}
