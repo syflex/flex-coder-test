@@ -1,117 +1,214 @@
-/* Basic Reset & Body Styles */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f7f6;
     color: #333;
-    margin: 0;
-    padding: 20px;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Align content to the top */
+    align-items: flex-start; /* Align at the top */
     min-height: 100vh;
+    margin: 0;
+    padding: 20px;
     box-sizing: border-box;
 }
 
-.container {
+#app {
     background-color: #fff;
     padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
 }
 
 h1 {
     text-align: center;
     color: #2c3e50;
     margin-bottom: 30px;
+    font-size: 2.2em;
 }
 
-/* Input and Button Section */
-.todo-input-section {
+#todo-form {
     display: flex;
     gap: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
-#newTodoInput {
+#todo-input {
     flex-grow: 1;
     padding: 12px 15px;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
+    border-radius: 8px;
+    font-size: 1em;
     outline: none;
-    transition: border-color 0.2s ease-in-out;
+    transition: border-color 0.2s ease;
 }
 
-#newTodoInput:focus {
-    border-color: #007bff;
+#todo-input:focus {
+    border-color: #4CAF50;
 }
 
-#addTodoBtn {
+#add-todo-button {
     padding: 12px 20px;
-    background-color: #007bff;
+    background-color: #4CAF50;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.2s ease-in-out;
-    white-space: nowrap; /* Prevent button text from wrapping */
+    font-size: 1em;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    flex-shrink: 0; /* Prevent button from shrinking */
 }
 
-#addTodoBtn:hover {
-    background-color: #0056b3;
+#add-todo-button:hover {
+    background-color: #45a049;
+    transform: translateY(-1px);
 }
 
-#addTodoBtn:active {
-    background-color: #004085;
+#add-todo-button:active {
+    transform: translateY(0);
 }
 
-/* Todo List */
-#todoList {
+#todo-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-#todoList li {
+.todo-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #f9f9f9;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
     border: 1px solid #eee;
-    transition: background-color 0.2s ease-in-out;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    word-break: break-word; /* Ensure long words wrap */
 }
 
-#todoList li:hover {
+.todo-item:hover {
     background-color: #f0f0f0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
-#todoList li span.todo-text {
+.todo-item.completed {
+    background-color: #e0ffe0;
+    border-color: #c9e6c9;
+}
+
+.todo-item.completed .todo-text {
+    text-decoration: line-through;
+    color: #777;
+}
+
+.todo-text {
     flex-grow: 1;
-    word-break: break-word; /* Ensure long words break */
-    margin-right: 15px; /* Space between text and button */
+    font-size: 1.1em;
+    color: #333;
+    margin-right: 15px; /* Space between text and buttons */
 }
 
-#todoList li .delete-btn {
+.todo-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0; /* Prevent actions from shrinking */
+}
+
+.toggle-button,
+.delete-button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.toggle-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.toggle-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+.todo-item.completed .toggle-button {
+    background-color: #6c757d; /* Grey for uncomplete */
+}
+
+.todo-item.completed .toggle-button:hover {
+    background-color: #5a6268;
+}
+
+.delete-button {
     background-color: #dc3545;
     color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.2s ease-in-out;
 }
 
-#todoList li .delete-btn:hover {
+.delete-button:hover {
     background-color: #c82333;
+    transform: translateY(-1px);
 }
 
-#todoList li .delete-btn:active {
-    background-color: #bd2130;
+.toggle-button:active,
+.delete-button:active {
+    transform: translateY(0);
+}
+
+.empty-message {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    padding: 20px;
+    background-color: #f0f8ff;
+    border: 1px dashed #c0e0ff;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+@media (max-width: 600px) {
+    #app {
+        padding: 20px;
+        margin: 10px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    #todo-form {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #add-todo-button {
+        width: 100%;
+    }
+
+    .todo-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 15px;
+    }
+
+    .todo-text {
+        margin-right: 0;
+        margin-bottom: 10px;
+        width: 100%; /* Ensure text wraps within item */
+    }
+
+    .todo-actions {
+        width: 100%;
+        justify-content: flex-end; /* Push buttons to the right */
+    }
+
+    .toggle-button,
+    .delete-button {
+        padding: 8px 10px;
+        font-size: 0.85em;
+    }
 }

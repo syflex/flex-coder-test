@@ -7,16 +7,16 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
+    <div id="app">
         <h1>My Todo List</h1>
 
-        <div class="todo-input-section">
-            <input type="text" id="newTodoInput" placeholder="Add a new todo item...">
-            <button id="addTodoBtn">Add Todo</button>
-        </div>
+        <form id="todo-form">
+            <input type="text" id="todo-input" placeholder="Add a new todo item..." required aria-label="New todo text">
+            <button type="submit" id="add-todo-button">Add Todo</button>
+        </form>
 
-        <ul id="todoList">
-            <!-- Todo items will be dynamically added here -->
+        <ul id="todo-list">
+            <!-- Todo items will be rendered here by JavaScript -->
         </ul>
     </div>
 
