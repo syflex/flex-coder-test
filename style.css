@@ -1,0 +1,128 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items to the start to prevent them from centering vertically when content is short */
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 2em;
+}
+
+.input-section {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+#todoInput {
+    flex-grow: 1;
+    padding: 12px 15px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.2s ease-in-out;
+}
+
+#todoInput:focus {
+    border-color: #4CAF50;
+}
+
+#addTodoButton {
+    padding: 12px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease-in-out;
+    white-space: nowrap; /* Prevent button text from wrapping */
+}
+
+#addTodoButton:hover {
+    background-color: #45a049;
+}
+
+#addTodoButton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+#todoList {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+
+#todoList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    word-break: break-word; /* Allow long words to break */
+}
+
+#todoList li:last-child {
+    margin-bottom: 0;
+}
+
+#todoList li .todo-text {
+    flex-grow: 1;
+    margin-right: 15px;
+    color: #333;
+}
+
+#todoList li .delete-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: background-color 0.2s ease-in-out;
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+#todoList li .delete-button:hover {
+    background-color: #e53935;
+}
+
+/* Optional: Add some responsive design for smaller screens */
+@media (max-width: 600px) {
+    .input-section {
+        flex-direction: column;
+    }
+    #addTodoButton {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+    }
+    .container {
+        padding: 20px;
+    }
+}
