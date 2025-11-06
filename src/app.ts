@@ -1,49 +1,47 @@
-// src/app.ts
+/**
+ * @file src/app.ts
+ * @description Main Express application configuration.
+ *              Sets up middleware, API routes, and frontend serving.
+ */
+
 import express from 'express';
-import cors from 'cors'; // Cross-Origin Resource Sharing
-import helmet from 'helmet'; // Security headers
-import morgan from 'morgan'; // HTTP request logger
-import habitsRoutes from './routes/habits.routes';
-import { errorHandler } from './middlewares/errorHandler.middleware';
-import { NotFoundError } from './utils/errors';
+import path from 'path'; // Node.js built-in module for path manipulation
+import habitRoutes from './routes/habitRoutes'; // Import habit API routes
+import { errorHandler } from './middlewares/errorHandler'; // Import global error handler
 
 const app = express();
 
-// --- Application-level Middleware ---
-
-// Enable CORS for all origins (customize as needed in production)
-app.use(cors());
-
-// Set various HTTP headers for security
-app.use(helmet());
-
-// Parse JSON request bodies
+// --- Core Middleware ---
+// Parses incoming requests with JSON payloads.
+// This is essential for our API to receive JSON data (e.g., when creating a habit).
 app.use(express.json());
 
-// Parse URL-encoded request bodies (e.g., from HTML forms)
+// Parses incoming requests with URL-encoded payloads.
+// Useful for traditional HTML form submissions, though our current frontend uses JSON fetch.
 app.use(express.urlencoded({ extended: true }));
 
-// HTTP request logger (using 'dev' format for development)
-app.use(morgan('dev'));
+// --- Frontend Serving ---
+// Serves static files (HTML, CSS, client-side JS) from the 'src/views' directory.
+// When a request comes in that doesn't match an API route, Express will look for a static file.
+// In a production setup with a dedicated frontend build, this would typically point to a 'dist' or 'public' folder.
+app.use(express.static(path.join(__dirname, 'views')));
 
-// --- Routes ---
+// --- API Routes ---
+// Mounts the habit routes under the '/api/habits' prefix.
+// All requests starting with /api/habits will be handled by habitRoutes.
+app.use('/api/habits', habitRoutes);
 
-// Root route for basic API health check or info
+// --- Frontend Entry Point ---
+// A catch-all route to serve the main 'habits.html' page for any request
+// that hasn't been handled by other static files or API routes.
+// This is typical for single-page applications (SPAs) where client-side routing takes over.
 app.get('/', (req, res) => {
-    res.status(200).json({ message: 'Welcome to the Habit Tracker API! Access /api/v1/habits for the habit endpoints.' });
+    res.sendFile(path.join(__dirname, 'views', 'habits.html'));
 });
 
-// Mount the habits routes under a specific API version prefix
-app.use('/api/v1/habits', habitsRoutes);
-
-// --- Error Handling Middleware ---
-
-// Catch-all for 404 Not Found errors: If no route handled the request
-app.use((req, res, next) => {
-    next(new NotFoundError(`The resource "${req.originalUrl}" was not found.`));
-});
-
-// Global error handler: This must be the last middleware in the chain
+// --- Global Error Handling ---
+// This middleware must be placed LAST, after all other routes and middleware.
+// It catches any errors thrown during request processing and sends a standardized error response.
 app.use(errorHandler);
 
 export default app;

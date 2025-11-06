@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker</title>
+    <style>
+        /* Basic CSS for a clean and responsive layout */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        section {
+            margin-bottom: 30px;
+        }
+        form {
+            background-color: #fdfdfd;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        form label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #34495e;
+        }
+        form input[type="text"], form textarea {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+            width: calc(100% - 24px); /* Account for padding */
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        form input[type="text"]:focus, form textarea:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+        }
+        form button {
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        form button:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        form button:active {
+            transform: translateY(0);
+        }
+
+        .habit-list {
+            list-style: none;
+            padding: 0;
+        }
+        .habit-item {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .habit-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .habit-item.completed {
+            background-color: #e6ffe6; /* Light green for completed habits */
+            border-color: #c3e6cb;
+            opacity: 0.85;
+        }
+        .habit-info {
+            flex-grow: 1;
+            margin-right: 15px;
+            min-width: 180px; /* Ensure info block has min width */
+        }
+        .habit-name {
+            font-weight: 700;
+            font-size: 1.2em;
+            color: #34495e;
+            margin-bottom: 5px;
+        }
+        .habit-description {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        .habit-date {
+            font-size: 0.8em;
+            color: #999;
+        }
+        .habit-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0; /* Prevent actions from shrinking */
+        }
+        .habit-actions button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .habit-actions button:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+        .complete-button {
+            background-color: #28a745; /* Green */
+            color: white;
+        }
+        .complete-button:hover:not(:disabled) {
+            background-color: #218838;
+        }
+        .complete-button:disabled {
+            background-color: #6c757d; /* Grey when disabled */
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none;
+        }
+        .delete-button {
+            background-color: #dc3545; /* Red */
+            color: white;
+        }
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+
+        .message-area {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            text-align: center;
+        }
+        .message-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            .habit-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .habit-info {
+                margin-right: 0;
+                width: 100%;
+            }
+            .habit-actions {
+                width: 100%;
+                justify-content: flex-end; /* Align buttons to right on small screens */
+            }
+            form input[type="text"], form textarea, form button {
+                width: 100%;
+                margin: 0; /* Reset width adjustment for input to use full width */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Habit Tracker</h1>
+
+        <!-- Message Area for success/error notifications -->
+        <div id="messageArea" class="message-area" style="display: none;"></div>
+
+        <section>
+            <h2>Add New Habit</h2>
+            <form id="addHabitForm">
+                <label for="habitName">Habit Name:</label>
+                <input type="text" id="habitName" name="name" required placeholder="e.g., Drink 8 glasses of water" maxlength="100">
+
+                <label for="habitDescription">Description (Optional):</label>
+                <textarea id="habitDescription" name="description" rows="3" placeholder="e.g., Stay hydrated throughout the day." maxlength="500"></textarea>
+
+                <button type="submit">Add Habit</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>My Habits</h2>
+            <ul id="habitList" class="habit-list">
+                <!-- Habits will be loaded here dynamically by JavaScript -->
+                <li>Loading habits...</li>
+            </ul>
+        </section>
+    </div>
+
+    <script>
+        // --- Global Constants & DOM Elements ---
+        const API_BASE_URL = '/api/habits'; // Base URL for habit API endpoints
+        const habitListElement = document.getElementById('habitList'); // UL element for habit list
+        const addHabitForm = document.getElementById('addHabitForm'); // Form for adding new habits
+        const messageArea = document.getElementById('messageArea'); // Div for displaying messages
+
+        // --- Utility Functions ---
+
+        /**
+         * Formats a date string into a readable format.
+         * @param {string} dateString - The date string to format (e.g., "2023-10-27T10:00:00.000Z").
+         * @returns {string} The formatted date string.
+         */
+        const formatDate = (dateString) => {
+            if (!dateString) return 'N/A';
+            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            try {
+                return new Date(dateString).toLocaleDateString(undefined, options);
+            } catch (e) {
+                console.error("Invalid date string for formatting:", dateString, e);
+                return 'Invalid Date';
+            }
+        };
+
+        /**
+         * Displays a temporary message (success or error) to the user.
+         * @param {string} message - The message content.
+         * @param {'success'|'error'} type - The type of message (determines styling).
+         */
+        const showMessage = (message, type = 'success') => {
+            messageArea.textContent = message;
+            messageArea.className = `message-area message-${type}`;
+            messageArea.style.display = 'block'; // Make message area visible
+            setTimeout(() => {
+                messageArea.style.display = 'none'; // Hide message after 5 seconds
+            }, 5000);
+        };
+
+        // --- DOM Rendering Functions ---
+
+        /**
+         * Creates and returns a DOM element (LI) for a single habit.
+         * Attaches event listeners for 'Mark Complete' and 'Delete' buttons.
+         * @param {object} habit - The habit object to render.
+         * @returns {HTMLLIElement} The created list item element.
+         */
+        const renderHabit = (habit) => {
+            const li = document.createElement('li');
+            li.id = `habit-${habit.id}`; // Assign a unique ID for easy DOM manipulation
+            li.className = `habit-item ${habit.completed ? 'completed' : ''}`; // Add 'completed' class if applicable
+
+            li.innerHTML = `
+                <div class="habit-info">
+                    <div class="habit-name">${escapeHTML(habit.name)}</div>
+                    ${habit.description ? `<div class="habit-description">${escapeHTML(habit.description)}</div>` : ''}
+                    <div class="habit-date">Created: ${formatDate(habit.createdAt)}</div>
+                    ${habit.completed ? `<div class="habit-date">Completed: ${formatDate(habit.completedAt)}</div>` : ''}
+                </div>
+                <div class="habit-actions">
+                    <button class="complete-button" data-id="${habit.id}" ${habit.completed ? 'disabled' : ''}>
+                        ${habit.completed ? 'Completed' : 'Mark Complete'}
+                    </button>
+                    <button class="delete-button" data-id="${habit.id}">Delete</button>
+                </div>
+            `;
+
+            // Attach event listeners directly to the buttons within the created LI element
+            // This is efficient as it only adds listeners to new elements, not the whole list.
+            li.querySelector('.complete-button').addEventListener('click', (event) => {
+                // Use dataset.id to get the habit ID from the button's data attribute
+                markHabitComplete(event.currentTarget.dataset.id);
+            });
+            li.querySelector('.delete-button').addEventListener('click', (event) => {
+                deleteHabit(event.currentTarget.dataset.id);
+            });
+
+            return li;
+        };
+
+        /**
+         * Simple HTML escaping to prevent XSS.
+         * @param {string} str - The string to escape.
+         * @returns {string} The escaped string.
+         */
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        // --- API Interaction & UI Update Functions ---
+
+        /**
+         * Fetches all habits from the API and updates the habit list in the DOM.
+         */
+        const fetchHabits = async () => {
+            try {
+                habitListElement.innerHTML = '<li>Loading habits...</li>'; // Show loading state
+                const response = await fetch(API_BASE_URL);
+                if (!response.ok) { // Check for HTTP errors (e.g., 404, 500)
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const result = await response.json(); // Parse JSON response
+
+                if (result.success) {
+                    habitListElement.innerHTML = ''; // Clear previous list items
+                    if (result.data && result.data.length > 0) {
+                        result.data.forEach(habit => {
+                            habitListElement.appendChild(renderHabit(habit)); // Add each habit to the list
+                        });
+                    } else {
+                        habitListElement.innerHTML = '<li>No habits added yet. Start by adding one above!</li>';
+                    }
+                } else {
+                    showMessage(result.error || 'Failed to fetch habits.', 'error');
+                    habitListElement.innerHTML = '<li>Error loading habits. Please try again.</li>';
+                }
+            } catch (error) {
+                console.error('Error fetching habits:', error);
+                showMessage('Network error or server unavailable while fetching habits.', 'error');
+                habitListElement.innerHTML = '<li>Network error loading habits.</li>';
+            }
+        };
+
+        /**
+         * Handles the submission of the "Add New Habit" form.
+         * Prevents default form submission and calls the API to create a new habit.
+         */
+        addHabitForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form refresh
+            const nameInput = document.getElementById('habitName');
+            const descriptionInput = document.getElementById('habitDescription');
+
+            const name = nameInput.value.trim();
+            const description = descriptionInput.value.trim();
+
+            if (!name) {
+                showMessage('Habit name cannot be empty.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(API_BASE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // Specify JSON content type
+                    },
+                    body: JSON.stringify({ name, description }), // Send data as JSON string
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage('Habit added successfully!', 'success');
+                    addHabitForm.reset(); // Clear form fields
+                    nameInput.focus(); // Set focus back to name input
+                    fetchHabits(); // Refresh the entire list to show the new habit
+                } else {
+                    showMessage(result.error || 'Failed to add habit.', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding habit:', error);
+                showMessage('Network error or server unavailable while adding habit.', 'error');
+            }
+        });
+
+        /**
+         * Calls the API to mark a specific habit as complete and updates the UI.
+         * @param {string} id - The ID of the habit to mark complete.
+         */
+        const markHabitComplete = async (id) => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/${id}/complete`, {
+                    method: 'PATCH', // Use PATCH for partial update (status change)
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage('Habit marked as complete!', 'success');
+                    // Find the specific habit item in the DOM and update its state
+                    const habitItem = document.getElementById(`habit-${id}`);
+                    if (habitItem) {
+                        habitItem.classList.add('completed'); // Add 'completed' class for styling
+                        const completeButton = habitItem.querySelector('.complete-button');
+                        if (completeButton) {
+                            completeButton.textContent = 'Completed';
+                            completeButton.disabled = true; // Disable button after completion
+                        }
+                        // Add or update the completedAt date display
+                        let completedAtDiv = habitItem.querySelector('.habit-date:last-child');
+                        if (!completedAtDiv || !completedAtDiv.textContent.includes('Completed:')) {
+                            completedAtDiv = document.createElement('div');
+                            completedAtDiv.className = 'habit-date';
+                            habitItem.querySelector('.habit-info').appendChild(completedAtDiv);
+                        }
+                        completedAtDiv.textContent = `Completed: ${formatDate(result.data.completedAt)}`;
+                    }
+                } else {
+                    showMessage(result.error || 'Failed to mark habit complete.', 'error');
+                }
+            } catch (error) {
+                console.error(`Error marking habit ${id} complete:`, error);
+                showMessage('Network error or server unavailable while marking habit complete.', 'error');
+            }
+        };
+
+        /**
+         * Calls the API to delete a specific habit and removes it from the UI.
+         * @param {string} id - The ID of the habit to delete.
+         */
+        const deleteHabit = async (id) => {
+            if (!confirm('Are you sure you want to delete this habit? This action cannot be undone.')) {
+                return; // User cancelled deletion
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/${id}`, {
+                    method: 'DELETE', // Use DELETE method
+                });
+
+                if (response.status === 204) { // 204 No Content is expected for successful DELETE
+                    showMessage('Habit deleted successfully!', 'success');
+                    document.getElementById(`habit-${id}`).remove(); // Remove the habit item from the DOM
+                    if (habitListElement.children.length === 0) {
+                        habitListElement.innerHTML = '<li>No habits added yet. Start by adding one above!</li>';
+                    }
+                } else {
+                    const result = await response.json(); // Parse error response if not 204
+                    showMessage(result.error || 'Failed to delete habit.', 'error');
+                }
+            } catch (error) {
+                console.error(`Error deleting habit ${id}:`, error);
+                showMessage('Network error or server unavailable while deleting habit.', 'error');
+            }
+        };
+
+        // --- Initial Page Load ---
+
+        // Fetch habits when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', fetchHabits);
+    </script>
+</body>
+</html>
