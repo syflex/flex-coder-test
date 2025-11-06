@@ -3,36 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flex Coder Todo App</title>
-    <!-- Link to the stylesheet for basic styling -->
+    <title>Todo App</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>My Todo List</h1>
 
-        <section id="todo-input-section">
-            <h2 class="sr-only">Add New Todo</h2>
-            <input 
-                type="text" 
-                id="new-todo-input" 
-                placeholder="What needs to be done?" 
-                aria-label="New todo item" 
-                required
-            >
-            <button id="add-todo-btn">Add Todo</button>
-        </section>
+        <div class="input-section">
+            <input type="text" id="todoInput" placeholder="What needs to be done?">
+            <button id="addButton">Add Todo</button>
+        </div>
 
-        <section id="todo-list-section">
-            <h2>Todos</h2>
-            <ul id="todo-list">
-                <!-- Todo items will be dynamically added here by script.js -->
-            </ul>
-        </section>
+        <ul id="todoList">
+            <!-- Todo items will be dynamically added here -->
+            <li class="placeholder-item">Start coding the new feature</li>
+            <li class="placeholder-item">Review existing codebase</li>
+            <li class="placeholder-item">Deploy to staging</li>
+        </ul>
     </div>
 
-    <!-- Link to the JavaScript file -->
-    <!-- 'defer' attribute ensures the HTML is parsed before the script runs -->
-    <script src="script.js" defer></script>
+    <script src="script.js"></script>
 </body>
 </html>
