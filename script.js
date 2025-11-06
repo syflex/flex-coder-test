@@ -1,92 +1,135 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Flex Coder Todo App loaded and ready!');
-
-    // --- DOM Element References ---
-    const todoTextInput = document.getElementById('todo-text-input');
-    const todoCategorySelect = document.getElementById('todo-category-select');
-    const addTodoButton = document.getElementById('add-todo-button');
+    // --- DOM Elements ---
+    const todoInput = document.getElementById('todo-input');
+    const todoCategory = document.getElementById('todo-category');
+    const addTodoBtn = document.getElementById('add-todo-btn');
     const todoList = document.getElementById('todo-list');
 
-    // --- Utility Functions ---
+    // --- Global State ---
+    let todos = []; // Array to hold todo objects { id, text, category, completed }
+
+    // --- Functions ---
 
     /**
-     * Renders a new todo item to the DOM.
-     * @param {string} text - The todo description.
-     * @param {string} category - The todo category.
+     * Loads todo items from localStorage.
+     * Handles parsing errors and ensures the data structure is an array.
      */
-    function renderTodoItem(text, category) {
-        // Remove placeholder if it exists
-        const placeholder = todoList.querySelector('.placeholder-item');
-        if (placeholder) {
-            placeholder.remove();
+    function loadTodos() {
+        try {
+            const storedTodos = localStorage.getItem('todos');
+            if (storedTodos) {
+                const parsedTodos = JSON.parse(storedTodos);
+                // Basic validation: ensure parsed data is an array
+                if (Array.isArray(parsedTodos)) {
+                    todos = parsedTodos;
+                } else {
+                    console.warn("Data loaded from localStorage was not an array. Initializing with empty list.");
+                    todos = [];
+                }
+            }
+        } catch (error) {
+            console.error("Error parsing todos from localStorage:", error);
+            // If parsing fails, reset todos to an empty array to prevent further issues
+            todos = [];
         }
-
-        const listItem = document.createElement('li');
-        listItem.setAttribute('data-category', category); // For potential filtering/styling
-        
-        // Structure for todo item: text, category, and future action buttons
-        listItem.innerHTML = `
-            <span class="todo-text">${text}</span>
-            <span class="category">${category}</span>
-            <!-- Future: Add buttons for delete/complete here -->
-        `;
-        todoList.appendChild(listItem);
+        renderTodos(); // Always render after loading to display current state
     }
 
-    // --- Event Handlers ---
+    /**
+     * Saves the current array of todo items to localStorage.
+     * Converts the todos array to a JSON string.
+     */
+    function saveTodos() {
+        try {
+            localStorage.setItem('todos', JSON.stringify(todos));
+        } catch (error) {
+            console.error("Error saving todos to localStorage:", error);
+            // Optionally, provide user feedback if storage fails (e.g., storage full)
+            alert('Could not save todo item. Storage might be full.');
+        }
+    }
 
     /**
-     * Handles the click event for the 'Add Todo' button.
+     * Renders the current list of todo items to the DOM.
+     * Clears the existing list and re-creates elements for each todo.
      */
-    function handleAddTodo() {
-        const todoText = todoTextInput.value.trim();
-        const todoCategory = todoCategorySelect.value; // Gets the 'value' attribute of the selected option
+    function renderTodos() {
+        todoList.innerHTML = ''; // Clear existing list items
 
-        // --- Client-Side Validation ---
-        if (!todoText) {
-            // Provide user feedback without blocking further interaction
-            alert('Error: Todo text cannot be empty. Please enter a description.');
-            todoTextInput.focus(); // Return focus to the input field
-            return; // Stop function execution
-        }
-
-        if (todoText.length > 255) {
-            alert('Error: Todo text is too long. Maximum 255 characters.');
-            todoTextInput.focus();
+        if (todos.length === 0) {
+            const emptyMessage = document.createElement('li');
+            emptyMessage.textContent = 'No todos yet! Add one above.';
+            emptyMessage.classList.add('empty-message');
+            todoList.appendChild(emptyMessage);
             return;
         }
 
-        if (!todoCategory) {
-            alert('Error: Please select a category for the todo item.');
-            todoCategorySelect.focus(); // Return focus to the category selector
-            return; // Stop function execution
+        todos.forEach(todo => {
+            const listItem = document.createElement('li');
+            listItem.classList.add('todo-item');
+            // Add a class based on category for specific styling
+            listItem.classList.add(`todo-item--${todo.category.toLowerCase()}`);
+
+            const todoTextSpan = document.createElement('span');
+            todoTextSpan.classList.add('todo-text');
+            todoTextSpan.textContent = todo.text;
+
+            const todoCategorySpan = document.createElement('span');
+            todoCategorySpan.classList.add('todo-category-display');
+            todoCategorySpan.textContent = `[${todo.category}]`;
+
+            listItem.appendChild(todoTextSpan);
+            listItem.appendChild(todoCategorySpan);
+            todoList.appendChild(listItem);
+        });
+    }
+
+    /**
+     * Handles the addition of a new todo item.
+     * Validates input, creates a new todo object, adds it to the list,
+     * saves to localStorage, and re-renders the list.
+     */
+    function addTodo() {
+        const todoText = todoInput.value.trim();
+        const todoCategory = todoCategory.value; // "Work" or "Food"
+
+        // Input validation
+        if (todoText === '') {
+            alert('Todo item cannot be empty! Please enter some text.');
+            todoInput.focus(); // Keep focus on the input for convenience
+            return;
         }
-        // --- End Client-Side Validation ---
 
-        console.log(`Attempting to add todo: "${todoText}" (Category: ${todoCategory})`);
+        // Create a new todo object
+        const newTodo = {
+            id: Date.now(), // Simple unique ID using timestamp
+            text: todoText,
+            category: todoCategory,
+            completed: false // Placeholder for future feature (e.g., marking as done)
+        };
 
-        // Simulate adding to a data store (for a real app, this would involve API calls or local storage)
-        // For now, directly render to the DOM to show functionality
-        renderTodoItem(todoText, todoCategory);
+        todos.push(newTodo); // Add the new todo to the array
+        saveTodos();         // Persist the updated list to localStorage
+        renderTodos();       // Update the displayed list in the UI
 
-        // Clear input fields after successful addition
-        todoTextInput.value = '';
-        todoCategorySelect.value = ''; // Resets dropdown to "Select Category" (because its value is "")
-        todoTextInput.focus(); // Keep focus on the text input for rapid entry
+        todoInput.value = ''; // Clear the input field
+        todoInput.focus();    // Keep focus on the input for quick consecutive entries
     }
 
     // --- Event Listeners ---
-    addTodoButton.addEventListener('click', handleAddTodo);
 
-    // Allow adding todo by pressing Enter key in the text input
-    todoTextInput.addEventListener('keypress', (event) => {
+    // Add todo when the button is clicked
+    addTodoBtn.addEventListener('click', addTodo);
+
+    // Add todo when Enter key is pressed in the input field
+    todoInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
-            event.preventDefault(); // Prevent default form submission if input were inside a <form>
-            addTodoButton.click(); // Programmatically click the add button
+            event.preventDefault(); // Prevent potential form submission if input was inside a form
+            addTodo();
         }
     });
 
-    // Optionally, if the placeholder item should be removed immediately
-    // when a user starts typing, or if there were pre-existing todos from storage.
-    // For now, it's removed only when the first todo is actually added.
+    // --- Initialization ---
+    // Load todos from localStorage and render them when the page loads
+    loadTodos();
 });
