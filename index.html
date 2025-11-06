@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex Coder Todo App</title>
+    <!-- Link to the stylesheet for basic styling -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>My Todo List</h1>
+
+        <section id="todo-input-section">
+            <h2 class="sr-only">Add New Todo</h2>
+            <input 
+                type="text" 
+                id="new-todo-input" 
+                placeholder="What needs to be done?" 
+                aria-label="New todo item" 
+                required
+            >
+            <button id="add-todo-btn">Add Todo</button>
+        </section>
+
+        <section id="todo-list-section">
+            <h2>Todos</h2>
+            <ul id="todo-list">
+                <!-- Todo items will be dynamically added here by script.js -->
+            </ul>
+        </section>
+    </div>
+
+    <!-- Link to the JavaScript file -->
+    <!-- 'defer' attribute ensures the HTML is parsed before the script runs -->
+    <script src="script.js" defer></script>
+</body>
+</html>
