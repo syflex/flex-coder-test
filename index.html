@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex Coder Todo App</title>
+    <!-- Link to the main stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>My Todo List</h1>
+
+        <!-- Section for adding new todo items -->
+        <div class="todo-input-section">
+            <input 
+                type="text" 
+                id="todo-text-input" 
+                placeholder="What needs to be done?" 
+                aria-label="Todo text" 
+                required 
+                maxlength="255"
+            >
+            
+            <select id="todo-category-select" aria-label="Todo category" required>
+                <option value="" disabled selected>Select Category</option>
+                <option value="work">Work</option>
+                <option value="food">Food</option>
+                <option value="personal">Personal</option>
+                <option value="shopping">Shopping</option>
+                <option value="other">Other</option>
+            </select>
+            
+            <button id="add-todo-button" title="Add new todo item">Add Todo</button>
+        </div>
+
+        <!-- Container to display the list of todo items -->
+        <div class="todo-list-container">
+            <h2>Current Todos</h2>
+            <ul id="todo-list" aria-live="polite">
+                <!-- Todo items will be dynamically added here by script.js -->
+                <li class="placeholder-item">No todos yet! Add one above.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Link to the main JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>
